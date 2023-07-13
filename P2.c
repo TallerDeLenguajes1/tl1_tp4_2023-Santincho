@@ -393,3 +393,19 @@ void eliminar(Nodo **Nodos)
 
     free(aux);
 }
+
+void MostrarDatos(Nodo *lista)
+{
+    Nodo *aux=lista;
+    int contador=0, sumaDuracion=0;
+    while (aux)
+    {
+        contador++;
+        sumaDuracion+=aux->T.Duracion;
+        aux=aux->Siguiente;
+    }
+
+    printf("Cantidad de tareas: %d",contador);
+    printf("Duracion total: %d", sumaDuracion);
+    
+}
