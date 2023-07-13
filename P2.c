@@ -70,37 +70,47 @@ int main()
     }
 
     //MOSTRAR TAREAS
-    mostrarTareas(tareasPendientes);
-    // MostrarDatos(tareasPendientes);
-    //Controles de tareas realizadas y pendientes
-    controlDeTareas(&tareasPendientes,&tareasRealizadas,&tareasEnProceso);
-    mostrarTareasRealizadas(tareasRealizadas);
-    mostrarTareasPendientes(tareasPendientes);
-    mostrarTareasEnProceso(tareasEnProceso);
-    
-    printf("\n======BUSQUEDA=====\n");
-    int id;
-    printf("\nIngrese el ID de la Tarea solicitada: \n\r");
-    scanf("%d",&id);
-    
-    while (id<=0 &&  isdigit(id))
-        {
-            puts("Valor incorrecto, intente nuevamente");
-            printf("\nIngrese el ID de la Tarea solicitada: \n\r");
-            scanf("%d",&id);
-        }
-    printf("\n");
+    int repetir;
+    do
+    {
+        mostrarTareas(tareasPendientes);
+        // MostrarDatos(tareasPendientes);
+        //Controles de tareas realizadas y pendientes
+        controlDeTareas(&tareasPendientes,&tareasRealizadas,&tareasEnProceso);
+        mostrarTareasRealizadas(tareasRealizadas);
+        mostrarTareasPendientes(tareasPendientes);
+        mostrarTareasEnProceso(tareasEnProceso);
+        
+        printf("\n======BUSQUEDA=====\n");
+        int id;
+        printf("\nIngrese el ID de la Tarea solicitada: \n\r");
+        scanf("%d",&id);
+        
+        while (id<=0 &&  isdigit(id))
+            {
+                puts("Valor incorrecto, intente nuevamente");
+                printf("\nIngrese el ID de la Tarea solicitada: \n\r");
+                scanf("%d",&id);
+            }
+        printf("\n");
 
-    TareaBuscada=BuscarTareaPorID(tareasPendientes, tareasRealizadas, tareasEnProceso, id);
+        TareaBuscada=BuscarTareaPorID(tareasPendientes, tareasRealizadas, tareasEnProceso, id);
+        
+        if (TareaBuscada)
+        {
+            seleccion(tareasPendientes, tareasRealizadas, tareasEnProceso,TareaBuscada, id);
+        }
+        else
+        {
+            printf("\nNo existe ninguna tarea asociada a ese ID");
+        }
+        printf("Presione 1 si desea modificar otra tarea");
+        scanf("%d", &repetir);
+    } while (repetir==1);
     
-    if (TareaBuscada)
-    {
-        seleccion(tareasPendientes, tareasRealizadas, tareasEnProceso,TareaBuscada, id);
-    }
-    else
-    {
-        printf("\nNo existe ninguna tarea asociada a ese ID");
-    }
+    MostrarDatos(tareasEnProceso);
+    MostrarDatos(tareasPendientes);
+    MostrarDatos(tareasRealizadas);
 
     free(tareasRealizadas);
     free(tareasPendientes);
@@ -267,6 +277,75 @@ void mostrarTareasEnProceso(Nodo *tareasEnProceso)
         aux=aux->Siguiente;
     }
 } 
+
+void seleccion(Nodo* tareasPendientes, Nodo* tareasRealizadas, Nodo* tareasEnProceso,Nodo* TareaBuscada, int id)
+{
+    Nodo *aux, *auxAnt;
+    aux = TareaBuscada;
+    int opcion;
+    print("\n\t=====Menu de movimientos de la Lista=====\n\r");
+    print("\nQue accion desea realizar con la tarea encontrada\n\r");
+    print("\n1- Mover a otra lista\n\r");
+    print("\n2- Eliminar tarea\n\r");
+    print("\n3- No realizar ninguna accion\n\r");
+    scanf("%d",&opcion);
+    fflush(stdin);
+   
+    while (opcion!=2 && opcion!=1 && opcion!=3)
+    {
+        puts("Valor incorrecto, intente nuevamente");
+        scanf("%d",&opcion);
+        fflush(stdin);
+    }
+
+    if (opcion==1)
+        {
+            if (aux==tareasPendientes)
+            {
+                tareasPendientes=aux->Siguiente;
+                auxAnt=aux->Siguiente;
+                aux->Siguiente=tareasRealizadas;
+                tareasRealizadas=aux;
+                aux=auxAnt;
+            }   
+            else
+            {
+                auxAnt=aux;
+                aux->Siguiente=tareasRealizadas;
+                tareasRealizadas=aux;
+                aux=aux->Siguiente;
+                auxAnt->Siguiente=aux->Siguiente;
+                
+            }
+        
+        }
+        else if (opcion==2)
+        {
+            if (aux==tareasPendientes)
+            {
+                tareasPendientes=aux->Siguiente;
+                auxAnt=aux->Siguiente;
+                aux->Siguiente=tareasEnProceso;
+                tareasEnProceso=aux;
+                aux=auxAnt;
+            }   
+            else
+            {
+                auxAnt=aux;
+                aux->Siguiente=tareasEnProceso;
+                tareasEnProceso=aux;
+                aux=aux->Siguiente;
+                auxAnt->Siguiente=aux->Siguiente;    
+            }
+        }
+        else
+        {
+            auxAnt=aux;
+            aux=aux->Siguiente;
+        }
+    
+    
+}
 
 Nodo *BuscarTareaPorID(Nodo* tareasPendientes, Nodo* tareasRealizadas, Nodo* tareasEnProceso, int id)
 {
